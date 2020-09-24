@@ -1,0 +1,92 @@
+﻿
+@{
+    ViewBag.Title = "Index";
+}
+
+@section Scripts
+{
+    <script type="text/javascript">
+
+    $(function () {
+        LoadData();
+        $("#btnSave").click(function () {
+            //alert("");
+            var ust = {};
+            ust.Usertype = $("#Usertype").val();
+            $.ajax({
+                type: "POST",
+                url: '@Url.Action("createUserType")',
+                data: '{ust: ' + JSON.stringify(ust) + '}',
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function () {
+                   // alert("Data has been added successfully.");
+                    LoadData();
+                },
+                error: function () {
+                    alert("Error while inserting data");
+                }
+            });
+            return false;
+        });
+    });
+
+    function LoadData() {
+        $("#tblStudent tbody tr").remove();
+        $.ajax({
+            type: 'POST',
+            url: '@Url.Action("getUserType")',
+            dataType: 'json',
+            data: { id: '' },
+            success: function (data) {
+                var items = '';
+                $.each(data, function (i, item) {
+                    var rows = "<tr>"
+                    + "<td class='prtoducttd'>" + item.UserTypeId + "</td>"
+                    + "<td class='prtoducttd'>" + item.Usertype + "</td>"
+                    + "</tr>";
+                    $('#tblUserType tbody').append(rows);
+                });
+            },
+            error: function (ex) {
+                var r = jQuery.parseJSON(response.responseText);
+                alert("Message: " + r.Message);
+                alert("StackTrace: " + r.StackTrace);
+                alert("ExceptionType: " + r.ExceptionType);
+            }
+        });
+        return false;
+    }
+    </script>
+}
+
+
+
+
+
+<div class="col-md-12">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Please enter the details below.</h3>
+        </div>
+        <div class="panel-body">
+            <form class="form-inline">
+                <div class="form-group">
+                    <div class="p-2"><label>User Type:</label></div>
+                    <div class="p-2"><input type="text" name="Usertype" id="Usertype" class="form-control" placeholder="Enter User Type" required="" /></div>
+                </div>
+                <input class="btn btn-primary" name="submitButton" id="btnSave" value="Save" type="button">
+            </form>
+        </div>
+    </div><hr />
+    <table id="tblUserType" class="table table-bordered table-striped table-responsive table-hover">
+        <thead>
+            <tr>
+                <th align="left" class="productth">UserTypeId</th>
+                <th align="left" class="productth">User Type Name</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+</div>
+
